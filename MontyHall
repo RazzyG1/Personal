@@ -1,0 +1,70 @@
+import random
+import time
+print("Welcome to the monty hall game! The best gameshow on and off this planet")
+name=input('What is your name contestant: ')
+print(f"Welcome {name} this may make you the richest person ever or cost your life")
+play=input("Do you still want to play(yes or no): ")
+
+while play != 'yes' and play != 'Yes' and play !='no' and play != 'No':
+    play=input(f"yes or no {name.upper()}!: ")
+
+if play == 'no'or play == 'No':
+    print(f"To bad {name} you don't get a choice")
+else:
+    print("Welcome!")
+time.sleep(1)
+print("The game starts in")
+print("3!")
+time.sleep(1)
+print("2!")
+time.sleep(1)
+print("1!")
+time.sleep(1)
+# this has been the intro to the game and if the contestant says they don't want to play they get told
+# to bad and are forced to paly where as if they say yes they just play it, if they say nether yes or no
+# then they are asked again if they want to play
+print("In case you don't know what this game is lets give you a quick rundown")
+print("you get to pick 1 of 3 doors behind 1 of the doors is all you could want")
+print("behind 2 of the doors is death so pick wise.")
+time.sleep(1)
+#Making first door choice
+choice =input('Which door do you want to choose? 1, 2,or 3: ')
+while choice != '1' and choice !='2' and choice !='3':
+    choice=input(f"1, 2, or 3 {name.upper()}!: ")
+#converting to int
+choice=int(choice)
+
+def montyHall(choice):
+    prizes = ['Death','Death','Gold']
+    
+    #making it ramdom order as to make it so you can't learn what it will do
+    random.shuffle(prizes)
+    
+    #Picking door without Gold
+    while True:
+        openingDoor=random.randrange(len(prizes))
+        if prizes[openingDoor] != 'car' and choice-1 !=openingDoor:
+            break
+    #Opening 1 door
+    openingDoor = openingDoor + 1
+    time.sleep(1)
+    print(f'And lets show them whats behind door number {openingDoor} and it is Death!')
+    time.sleep(1)
+    print('Good job not picking that one')
+    time.sleep(1)
+    #Determining Switchto Door
+    options = [1,2,3]
+    options.remove(choice)
+    options.remove(openingDoor)
+    switchingDoor = options[0]
+    
+    #asking to switch
+    answer = input(f'Do you want to switch to door number {switchingDoor}? (yes/no): ' )
+    if answer == 'yes':
+        result = switchingDoor - 1
+    else:
+        result = choice - 1
+    #What you get
+    print(f'And your prize is! {prizes[result]}')
+
+montyHall(choice)
