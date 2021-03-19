@@ -1,0 +1,175 @@
+import pygame
+import math
+import random 
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+
+
+class Ball():
+    
+    def __init__(self, posIn, sizeIn, colorIn):
+        self.pos = posIn
+        self.size = sizeIn
+        self.color = colorIn 
+        
+    def draw(self, surfaceIn):
+        pygame.draw.circle(surfaceIn, self.color, self.pos, self.size)
+        
+    def move(self, xIn=0, yIn=0):
+        self.pos = ( self.pos[0] + xIn, self.pos[1]+ yIn)
+        
+    def distFromPoint(self, xIn, yIn):
+        distance = math.sqrt( ((xIn-self.pos[0])**2)+((yIn-self.pos[1])**2) )
+        return distance
+    
+    def collideCircle(self, BallIn):
+        if(self.distFromPoint(BallIn.pos[0],BallIn.pos[1]) < (self.size + BallIn.size)):
+            return False
+        
+
+        
+def main():
+    """ Set up the game and run the main game loop """
+    pygame.init()      # Prepare the pygame module for use
+  
+    surfaceSize = [480,480]   # Desired physical surface size, in pixels.
+    clock = pygame.time.Clock()  #Force frame rate to be slower
+    # Create surface of (width, height), and its window.
+    mainSurface = pygame.display.set_mode(surfaceSize)
+    # Sets font for writing 
+    font = pygame.font.Font(None, 36)
+
+    #Makes the walls
+    def realWallY(length,x,z):
+        for i in range(length):
+            wall.append(Ball([x,i*5+z],10, (0,0,0)))
+    def realWallX(length,y,z):
+        for i in range(length):
+            wall.append(Ball([i*5+z,y],10, (0,0,0)))
+                
+    # Create the ball object using it's position, size and color
+    circle = Ball([23,23], 10, (255, 0, 0))        # A color is a mix of (Red, Green, Blue)
+    wall = []
+    
+    # Randomize  where win point spawns 
+    win1 = [440,220]
+    win2 = [390,60]
+    win3 = [120,450]
+    winxy = [win1,win2,win3]
+    winzz = (random.choice(winxy))
+    win = Ball([winzz[0],winzz[1]], 20, (0, 255, 0))
+    
+    #Actualy setting wall spots 
+    #realWallY=Length x distanceOff
+    #realWallX=Length y distanceOff
+    realWallY(100,0,0)
+    realWallX(100,0,0)
+    realWallY(100,480,0)
+    realWallX(100,480,0)
+    realWallX(27,45,0)
+    realWallX(30,45,200)
+    realWallY(20,350,0)
+    realWallY(12,200,50)
+    realWallX(10,110,150)
+    realWallY(10,425,50)
+    realWallX(15,100,350)
+    realWallY(24,75,50)
+    realWallY(12,150,110)
+    realWallX(24,170,150)
+    realWallY(12,270,175)
+    realWallX(36,235,90)
+    realWallY(12,80,235)
+    realWallX(12,295,85)
+    realWallY(12,140,300)
+    realWallX(12,360,145)
+    realWallY(12,80,360)
+    realWallX(36,420,80) 
+    realWallY(24,260,300)
+    realWallY(12,160,420)
+    realWallX(24,295,200)
+    realWallY(30,320,150)
+    realWallX(18,110,200)
+    realWallX(18,180,400)
+    realWallY(35,400,180)
+    realWallX(12,350,340)
+    realWallY(12,340,350)
+    realWallY(12,400,350)
+    
+    
+    
+    gameOver = True
+    startScreen = True
+
+    while True:
+        ev = pygame.event.poll()    # Look for any event
+        if ev.type == pygame.QUIT:  # Window close button clicked?
+            break                   # leave game loop
+        
+        # Moves Player Circle 
+        if pygame.key.get_pressed()[pygame.K_RIGHT] == True:
+            circle.move(1,0)
+        if pygame.key.get_pressed()[pygame.K_LEFT] == True:
+            circle.move(-1,0)
+        if pygame.key.get_pressed()[pygame.K_UP] == True:
+            circle.move(0,-1)
+        if pygame.key.get_pressed()[pygame.K_DOWN] == True:
+            circle.move(0,1)
+        
+        
+        
+                
+        # StartScreen and text on it
+        if startScreen == True:
+            mainSurface.fill((0, 200, 0))
+            text = font.render("Press Space to start", True, WHITE)
+            
+            text_rect = text.get_rect()
+            mainSurface.blit(text, [130, 240])
+            
+            text1 = font.render("Use arrow keys to navigate", True, WHITE)
+            mainSurface.blit(text1, [90, 100])
+            
+            text2 = font.render("get to green circle to win", True, WHITE)
+            mainSurface.blit(text2, [100, 130])
+            
+            # Moves to next screen
+            if pygame.key.get_pressed()[pygame.K_SPACE] == True:
+                startScreen = False
+            
+            
+        else:
+            if gameOver == False:
+        # If game over is true, draw game over
+                mainSurface.fill((0, 200, 0))
+                text = font.render("Game Over", True, WHITE)
+                text_rect = text.get_rect()
+                text_x = mainSurface.get_width() / 2 - text_rect.width / 2
+                text_y = mainSurface.get_height() / 2 - text_rect.height / 2
+                mainSurface.blit(text, [text_x, text_y])
+            
+            else:
+        # If game isn't over, draw this stuff.
+                mainSurface.fill((0, 200, 255))
+                for singleWall in wall:
+                    if circle.collideCircle(singleWall) == False:
+                        circle.pos = [20,23]
+                for singlewall in wall:
+                    singlewall.draw(mainSurface) 
+                if circle.collideCircle(win) == False:
+                    gameOver = False
+                        
+                circle.draw(mainSurface)
+                win.draw(mainSurface) 
+            
+        
+        
+        # Now the surface is ready, tell pygame to display it!
+        pygame.display.flip()
+        
+        clock.tick(60) #Force frame rate to be slower
+
+    pygame.quit()     # Once we leave the loop, close the window.
+
+main()
